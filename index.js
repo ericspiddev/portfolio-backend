@@ -23,17 +23,24 @@ class PortfolioBackend {
         ); 
     }
 
+    setupExpress() {
+        this.backend.use(express.json()); 
+        this.backend.use(express.urlencoded());
+    }
+
     setupEndpoints() {
-        this.backend.get('/api/test/', (req, res) => {
-            res.json({message: "Hit the test endpoint"});
+        this.backend.post('/api/test/', (req, res) => {
+            mailer.setData(req.body)
+            res.sendStatus(200);
         });
-        this.backend.get('/api/send-mail', (req, res) => {
+        this.backend.post('/api/send-mail', (req, res) => {
             console.log("sending email.....");
             if( this.mailer == null) { 
                 console.log("No mailer leaving endpoint"); 
             }
             try {
-                this.mailer.sendMail(testData)
+                this.mailer.setData(req.body)
+                this.mailer.sendMail(this.mailer.mailData)
             }
             catch (error) {
                 console.log("Error sending email " + error);
@@ -55,7 +62,7 @@ class PortfolioBackend {
     }
 }
 
-
 const be = new PortfolioBackend();
+be.setupExpress();
 be.setupEndpoints();
 be.start(backendPort);

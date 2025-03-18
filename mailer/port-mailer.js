@@ -51,6 +51,7 @@ export class PortfolioMailer {
         this.receiver = receiver;
         this.dataMax = dataMaxLength;
         this.htmlTemplate = templatePath;
+        this.mailData = undefined;
         this.emailTransporter = nodemailer.createTransport({
             host: this.host || 'gmail',
             port: this.port || 587,
@@ -67,7 +68,7 @@ export class PortfolioMailer {
             console.log("No email transporter setup for class can't send email");
             return -1;
         }
-        if( data == null ) {
+        if( data == null  || data == undefined ) {
             console.log("Null data aborting email send");
             return -1;
         }
@@ -94,6 +95,10 @@ export class PortfolioMailer {
 
     useSecurePort(port){
         return port == 456 ? true : false;
+    }
+
+    setData(body) {
+        this.mailData = new EmailData(body.fullName, body.userEmail, body.customMessage);
     }
 
    async generateHtmlEmail(data) {

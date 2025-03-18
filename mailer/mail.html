@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanks for Connecting</title>
+    <style>
+        /* Email-friendly CSS */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .email-header {
+            background-color: #2c3e50;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+        }
+        .email-body {
+            padding: 30px;
+        }
+        .email-body p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        .submission-details {
+            background-color: #f9f9f9;
+            border: 1px solid #eeeeee;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .detail-row {
+            margin-bottom: 15px;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #7f8c8d;
+        }
+        .detail-value {
+            display: block;
+            padding-left: 10px;
+            border-left: 3px solid #3498db;
+        }
+        .message-box {
+            background-color: #f9f9f9;
+            border: 1px solid #eeeeee;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .email-footer {
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .social-links {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            color: #3498db;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Thanks for Connecting!</h1>
+        </div>
+        
+        <div class="email-body">
+            <p>Hello {{NAME}},</p>
+            
+            <p>Thank you for reaching out! I've received your message and will get back to you as soon as possible. Below is a summary of the information you provided:</p>
+            
+            <div class="submission-details">
+                <div class="detail-row">
+                    <span class="detail-label">Name:</span>
+                    <span class="detail-value">{{NAME}}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Email Address:</span>
+                    <span class="detail-value">{{EMAIL}}</span>
+                </div>
+            </div>
+            
+            <p><strong>Your message:</strong></p>
+            <div class="message-box">
+                <p>{{MESSAGE}}</p>
+            </div>
+            
+            <p>I look forward to connecting with you! I typically respond within 1-2 business days.</p>
+            
+            <p>Best regards,<br>
+            Eric Spidle<br>
+            Embedded Software Engineer I</p>
+            
+        </div>
+        
+        <div class="email-footer">
+            <p>This is an automated response to your form submission.</p>
+            <p>© 2025 Eric Spidle. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

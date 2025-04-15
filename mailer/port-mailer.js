@@ -12,11 +12,11 @@ export class EmailData {
         this.userEmail = userEmail;
         this.customMessage = customMessage;
     }
-    verifyUserData() { 
+    verifyUserData() {
         if(this.verifyDataField(this.fullName)) {
             console.log("Error: parsing user full name");
             return false;
-        } 
+        }
         if(this.verifyDataField(this.userEmail)) {
             console.log("Error: parsing user email");
             return false;
@@ -44,8 +44,8 @@ export class EmailData {
 
 export class PortfolioMailer {
     constructor(host, port, user, password, receiver, dataMaxLength, templatePath) {
-        this.host = host; 
-        this.port = port; 
+        this.host = host;
+        this.port = port;
         this.user = user;
         this.password = password;
         this.receiver = receiver;
@@ -58,17 +58,17 @@ export class PortfolioMailer {
             secure: this.useSecurePort(this.port),
             auth : {
                 user: this.user,
-                pass: this.password, 
+                pass: this.password,
             }
-        }); 
+        });
     }
-    
+
     async sendMail(data) {
         if( this.emailTransporter == null ) {
             console.log("No email transporter setup for class can't send email");
             return -1;
         }
-        if( data == null  || data == undefined ) {
+        if( data == null || data == undefined ) {
             console.log("Null data aborting email send");
             return -1;
         }
@@ -81,7 +81,7 @@ export class PortfolioMailer {
             from: "'Eric's Portfolio Website' <" + process.env.MAIL_USER + ">",
             to: this.receiver,
             subject: `${data.fullName} has reached out with a message!`,
-            text: this.buildRawEmailText(data), 
+            text: this.buildRawEmailText(data),
             html: await this.generateHtmlEmail(data)
         });
     }
@@ -94,7 +94,7 @@ export class PortfolioMailer {
     }
 
     useSecurePort(port){
-        return port == 456 ? true : false;
+        return port == 456;
     }
 
     setData(body) {
@@ -108,10 +108,10 @@ export class PortfolioMailer {
             htmlContent = htmlContent.replace(/{{NAME}}/g, data.fullName);
             htmlContent = htmlContent.replace(/{{EMAIL}}/g, data.userEmail);
             return htmlContent;
-        } 
+        }
         catch(err) {
             console.log("Error reading in html email template: " + err);
-            throw err; 
-        } 
-    } 
+            throw err;
+        }
+    }
 }

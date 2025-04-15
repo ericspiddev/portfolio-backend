@@ -1,4 +1,5 @@
 import {PortfolioMailer, EmailData}  from "./mailer/port-mailer.js";
+import {getPullRequest} from "./github/port-github";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv"
@@ -13,18 +14,18 @@ class PortfolioBackend {
         dotenv.config();
         this.backend.use(cors());
         this.mailer = new PortfolioMailer(
-            process.env.MAIL_HOST, 
-            process.env.MAIL_PORT, 
+            process.env.MAIL_HOST,
+            process.env.MAIL_PORT,
             process.env.MAIL_USER,
             process.env.MAIL_PASSWORD,
             process.env.MAIL_RECEIVER,
             process.env.MAIL_FIELD_MAX_SIZE,
             process.env.HTML_MAIL_TEMP,
-        ); 
+        );
     }
 
     setupExpress() {
-        this.backend.use(express.json()); 
+        this.backend.use(express.json());
         this.backend.use(express.urlencoded());
     }
 
@@ -33,19 +34,23 @@ class PortfolioBackend {
             mailer.setData(req.body)
             res.sendStatus(200);
         });
+
+        this.backend.get("/api/contributions", (req, res) => {
+            getPullRequest("seL4", "camkes-vm", 134)
+            res.send("<h1> contributions ep </h1>")
+        });
         this.backend.post('/api/send-mail', (req, res) => {
-            console.log("sending email.....");
-            if( this.mailer == null) { 
-                console.log("No mailer leaving endpoint"); 
+            res.sendStatus(200);
+            if( this.mailer == null) {
+                console.error("No mailer leaving endpoint");
             }
             try {
                 this.mailer.setData(req.body)
                 this.mailer.sendMail(this.mailer.mailData)
             }
             catch (error) {
-                console.log("Error sending email " + error);
+                console.error("Error sending email " + error);
             }
-            res.json({message: "Succesfully sent mail"}); 
         });
         this.isSetup = true;
     }

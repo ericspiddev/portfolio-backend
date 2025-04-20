@@ -1,9 +1,10 @@
-import {PortfolioMailer, EmailData}  from "./mailer/port-mailer.js";
-import {getPullRequest} from "./github/port-github";
+import {PortfolioMailer, EmailData} from "./mailer/port-mailer.js";
+import {readFeatureCommitData, setupPrApiRequests} from "./github/port-github.js";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv"
 const backendPort = 5050;
+export const dataPath = "data/feature.json";
 
 const testData = new EmailData("Kailey Walter", "kailey@hotmail.com", "A new message wanting to connect with you about tech");
 
@@ -27,6 +28,7 @@ class PortfolioBackend {
     setupExpress() {
         this.backend.use(express.json());
         this.backend.use(express.urlencoded());
+        setupPrApiRequests("*/30 * * * *"); // scehdule job every 30 mins
     }
 
     setupEndpoints() {
@@ -35,9 +37,10 @@ class PortfolioBackend {
             res.sendStatus(200);
         });
 
-        this.backend.get("/api/contributions", (req, res) => {
-            getPullRequest("seL4", "camkes-vm", 134)
-            res.send("<h1> contributions ep </h1>")
+        this.backend.get("/api/contributions/:feature_name", async (req, res) => {
+            let feature = req.params.feature_name + "_feature" // CHANGE ME we can remove feature
+            let data = await readFeatureCommitData(dataPath);
+            res.json(data[feature]);
         });
         this.backend.post('/api/send-mail', (req, res) => {
             res.sendStatus(200);

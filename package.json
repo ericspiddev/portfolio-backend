@@ -8,12 +8,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type" : "module",
+  "type": "module",
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.10.0",
     "octokit": "^4.1.3"
   }

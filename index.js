@@ -43,16 +43,18 @@ class PortfolioBackend {
             res.json(data[feature]);
         });
         this.backend.post('/api/send-mail', (req, res) => {
-            res.sendStatus(200);
             if( this.mailer == null) {
                 console.error("No mailer leaving endpoint");
+                res.sendStatus(400);
             }
             try {
                 this.mailer.setData(req.body)
                 this.mailer.sendMail(this.mailer.mailData)
+                res.sendStatus(200);
             }
             catch (error) {
                 console.error("Error sending email " + error);
+                res.sendStatus(400);
             }
         });
         this.isSetup = true;

@@ -66,7 +66,7 @@ export function setupPrApiRequests(scheduleString) {
     first = 0; // reset first just in case
     console.log("Set up a schedule for requesting data to see if it changes");
     const job = scheduleJob(scheduleString, async function () {
-        console.log("Refreshing data from Github....");
+        console.log("Refreshing data from Github...");
         try {
             let features = await requestAllFeatureData();
             if (features != undefined) {
@@ -80,6 +80,7 @@ export function setupPrApiRequests(scheduleString) {
 
 async function getFeatureCommits(pullRequestData) { // array of data for PRs
     let projectCommits = {};
+    projectCommits["project"] = pullRequestData[0].project; // assume all commits have same base project
     let err = 0;
     for(let i = 0; i < pullRequestData.length; i++) {
         let data = pullRequestData[i];
@@ -88,8 +89,7 @@ async function getFeatureCommits(pullRequestData) { // array of data for PRs
             let prData = await getProjectPullRequests(data.project, data.repo, data.pullRequestId);
             projectCommits[data.repo] = prData;
         } catch (err) {
-            err = -1
-            console.log("Error processing the pr data")
+            console.log("Error processing the pull request data: " + err);
         }
     }
 
@@ -97,11 +97,13 @@ async function getFeatureCommits(pullRequestData) { // array of data for PRs
         console.log("Succesfully got data... writing to the file!");
         console.log("Data returned is " + JSON.stringify(projectCommits, null, 4));
     }
-
+    
+    console.log("project commits is " + JSON.stringify(projectCommits));
     return projectCommits;
 }
 // we need a function that groups all of a feature's projects and calls this repeatedly
 async function getProjectPullRequests(baseProject, repo, pullRequestId) { // this returns one repo's commits
+    let pullRequest = {};
     const octokit = new Octokit({
         auth: process.env.GITHUB_API_TOKEN
     });
@@ -112,11 +114,32 @@ async function getProjectPullRequests(baseProject, repo, pullRequestId) { // thi
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
-    })
-    let rate = await octokit.request('GET /rate_limit');
-    console.log(rate.data.rate.remaining);
+    });
 
-    return parseGithubCommits(commits.data); // returns an array of commit objects that contain 'sha, message, author'
+    let merged = false;
+    try{
+        await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}/merge', {
+        owner: baseProject,
+        repo: repo,
+        pull_number: pullRequestId,
+        headers: {
+            'X-GitHub-Api-Version': '2022-11-28'
+        }
+        })
+        merged = true;
+    } catch(error) {
+        console.log("MR not merged")
+    }
+
+    let rate = await octokit.request('GET /rate_limit');
+    if (rate >= 5000) {
+        console.error("Out of hourly github tokens: something is very wrong");
+    }
+    console.log(rate.data.rate.remaining);
+    pullRequest["commits"] = parseGithubCommits(commits.data)
+    pullRequest["is_merged"] = merged;
+
+    return pullRequest; // returns an array of commit objects that contain 'sha, message, author'
 }
 
 function parseGithubCommits(apiData)

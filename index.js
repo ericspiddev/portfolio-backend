@@ -19,7 +19,7 @@ class PortfolioBackend {
         this.backend = express();
         this.isSetup = false;
         dotenv.config();
-        this.backend.use(cors());
+        this.backend.use(cors({ origin: `${process.env.CORS_ALLOWED_HOST}`}));
         this.mailer = new PortfolioMailer(
             process.env.MAIL_HOST,
             process.env.MAIL_PORT,
@@ -34,21 +34,18 @@ class PortfolioBackend {
     setupExpress() {
         this.backend.use(express.json());
         this.backend.use(express.urlencoded());
+        this.backend.use('/api/', limiter)
         setupPrApiRequests("*/30 * * * *"); // scehdule job every 30 mins
     }
 
     setupEndpoints() {
-        this.backend.post('/api/test/', (req, res) => {
-            mailer.setData(req.body)
-            res.sendStatus(200);
-        });
 
-        this.backend.get("/api/contributions/:feature_name", async (req, res) => {
+        this.backend.get("/api/62567c58947/contributions/:feature_name", async (req, res) => {
             let feature = req.params.feature_name + "_feature" // CHANGE ME we can remove feature
             let data = await readFeatureCommitData(dataPath);
             res.json(data[feature]);
         });
-        this.backend.post('/api/send-mail', (req, res) => {
+        this.backend.post('/api/30b6adadfbf49/send-mail', (req, res) => {
             if( this.mailer == null) {
                 console.error("No mailer leaving endpoint");
                 res.sendStatus(400);

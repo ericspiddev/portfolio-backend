@@ -1,12 +1,18 @@
 import {PortfolioMailer, EmailData} from "./mailer/port-mailer.js";
 import {readFeatureCommitData, setupPrApiRequests} from "./github/port-github.js";
 import express from "express";
+import rateLimit from "express-rate-limit";
 import cors from "cors";
 import dotenv from "dotenv"
 const backendPort = 5050;
 export const dataPath = "data/feature.json";
 
 const testData = new EmailData("Kailey Walter", "kailey@hotmail.com", "A new message wanting to connect with you about tech");
+
+const limiter = rateLimit({ // limit to 30 requests every 20 minutes
+    windowMs: 20 * 60 * 6000,
+    max: 30,
+});
 
 class PortfolioBackend {
     constructor() {
